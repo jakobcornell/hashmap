@@ -32,7 +32,7 @@ struct hashmap_api {
 	/*
 	 * Deallocates all map resources allocated by the library.
 	 */
-	void (*clean_up)(struct hashmap *map);
+	void (*finish)(struct hashmap *map);
 
 	/*
 	 * Gets an array of the keys or values in the map. Use the map's `size` field to bound iteration.

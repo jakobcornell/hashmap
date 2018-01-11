@@ -23,7 +23,7 @@ struct map_entry {
 };
 
 static void initialize(struct hashmap *, double, size_t (*)(void *), unsigned int (*)(void *, void *));
-static void clean_up(struct hashmap *);
+static void finish(struct hashmap *);
 static void **keys(struct hashmap *);
 static void **values(struct hashmap *);
 static unsigned int contains(struct hashmap *, void *);
@@ -36,7 +36,7 @@ static size_t key_index(struct hashmap *, void *);
 
 struct hashmap_api hashmap = {
 	.initialize = initialize,
-	.clean_up = clean_up,
+	.finish = finish,
 	.keys = keys,
 	.values = values,
 	.contains = contains,
@@ -54,7 +54,7 @@ static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void
 	map->equals = equals;
 }
 
-static void clean_up(struct hashmap *map) {
+static void finish(struct hashmap *map) {
 	struct map_entry **entries = get_entries(map);
 	for (size_t i = 0; i < map->size; i += 1) {
 		free(entries[i]);
