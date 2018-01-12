@@ -1,5 +1,7 @@
 CFLAGS=-std=c99 -Wall -Wextra -pedantic
 
+.PHONY: clean
+
 test: hashmap.a test.c
 	gcc ${CFLAGS} test.c hashmap.a -o test
 

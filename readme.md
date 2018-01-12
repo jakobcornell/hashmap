@@ -8,7 +8,9 @@ Files
 How to build
 ============
 
-There's a straightforward `make` build file. Target `hashmap.o` produces the object file for the library, and target `test` produces the test executable.
+There's a straightforward `make` build file. Target `hashmap.a` produces the static library archive (and the library's single object file), and target `test` produces the test executable.
+
+The `clean` target removes build intermediates and the test program.
 
 How to use
 ==========
@@ -28,7 +30,11 @@ and then access the functions as members of the struct, e.g.:
 
 Client programs should include `hashmap.h` and compile against `hashmap.c`. The API uses the type `size_t`, so programs should also include their standard library's `stddef.h` or `stdlib.h`. The header file `hashmap.h` uses these type definitions, so these system headers should be included first.
 
+Compilation might look like this:
+
+	gcc myprog.c hashmap.a -o myprog
+
 Testing
 =======
 
-The test program prints test results as an integer followed by a description of the test. The integer is `0` if the test fails, and `1` if it passes.
+The test program `test` prints test results as an integer followed by a description of the test. The integer is `0` if the test fails, and `1` if it passes.
