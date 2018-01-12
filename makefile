@@ -1,10 +1,11 @@
 CFLAGS=-std=c99 -Wall -Wextra -pedantic
 
-test: hashmap.o test.c
-	gcc ${CFLAGS} test.c hashmap.o -o test
+test: hashmap.a test.c
+	gcc ${CFLAGS} test.c hashmap.a -o test
 
-hashmap.o: hashmap.c hashmap.h
+hashmap.a: hashmap.c hashmap.h
 	gcc ${CFLAGS} -c hashmap.c
+	ar rcs hashmap.a hashmap.o
 
 clean:
-	rm -f hashmap.o test
+	rm -f hashmap.a hashmap.o test
