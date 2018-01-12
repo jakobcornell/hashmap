@@ -134,7 +134,11 @@ static void *get(struct hashmap *map, void *key) {
 static unsigned int resize(struct hashmap *map) {
 	size_t new_capacity = map->capacity * 2;
 
-	struct map_entry **new_table = calloc(new_capacity, sizeof (struct map_entry *));
+	struct map_entry **new_table = malloc(new_capacity * sizeof (struct map_entry *));
+	for (size_t i = 0; i < new_capacity; i += 1) {
+		new_table[i] = NULL;
+	}
+
 	if (new_table == NULL) {
 		return 0;
 	} else {
