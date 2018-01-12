@@ -22,17 +22,17 @@ struct map_entry {
 	struct map_entry *next;
 };
 
-static void initialize(struct hashmap *, double, size_t (*)(void *), unsigned int (*)(void *, void *));
-static void finish(struct hashmap *);
-static void fill_keys(void *buffer[], struct hashmap *);
-static void fill_values(void *buffer[], struct hashmap *);
-static unsigned int contains(struct hashmap *, void *);
-static void *get(struct hashmap *, void *);
-static unsigned int put(struct hashmap *, void *, void *);
-static unsigned int remove(struct hashmap *, void *);
+static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *));
+static void finish(struct hashmap *map);
+static void fill_keys(void *buffer[], struct hashmap *map);
+static void fill_values(void *buffer[], struct hashmap *map);
+static unsigned int contains(struct hashmap *map, void *key);
+static void *get(struct hashmap *map, void *key);
+static unsigned int put(struct hashmap *map, void *key, void *value);
+static unsigned int remove(struct hashmap *map, void *key);
 
-static void fill_entries(struct map_entry *buffer[], struct hashmap *);
-static size_t key_index(struct hashmap *, void *);
+static void fill_entries(struct map_entry *buffer[], struct hashmap *map);
+static size_t key_index(struct hashmap *map, void *key);
 
 struct hashmap_api hashmap = {
 	.initialize = initialize,
@@ -45,7 +45,7 @@ struct hashmap_api hashmap = {
 	.remove = remove,
 };
 
-static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void *), unsigned int (*equals)(void *, void *)) {
+static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *)) {
 	map->table = calloc(INITIAL_CAPACITY, sizeof (struct map_entry *));
 	map->size = 0;
 	map->capacity = INITIAL_CAPACITY;

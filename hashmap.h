@@ -14,7 +14,7 @@ struct hashmap {
 	size_t capacity;
 	double max_load;
 
-	size_t (*hash)(void *);
+	size_t (*hash)(void *key);
 	unsigned int (*equals)(void *, void *);
 };
 
