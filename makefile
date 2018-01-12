@@ -1,19 +1,10 @@
-VERSION=`cat version`
+CFLAGS=-std=c99 -Wall -Wextra -pedantic
 
-test: hashmap.h hashmap.c test.c
-	gcc -g -std=c99 -Wall -Wextra -pedantic -o test test.c hashmap.c
+test: hashmap.o test.c
+	gcc ${CFLAGS} test.c hashmap.o -o test
 
-tar: hashmap.h hashmap.c test.c makefile license readme version changelog
-	tar --create --directory=..\
-		hashmap/hashmap.h\
-		hashmap/hashmap.c\
-		hashmap/test.c\
-		hashmap/makefile\
-		hashmap/license\
-		hashmap/readme\
-		hashmap/version\
-		hashmap/changelog\
-	>hashmap-$(VERSION).tar
+hashmap.o: hashmap.c hashmap.h
+	gcc ${CFLAGS} -c hashmap.c
 
 clean:
-	rm -f test hashmap-$(VERSION).tar
+	rm -f hashmap.o test

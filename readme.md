@@ -5,6 +5,11 @@ Files
 - `hashmap.c`: API implementation
 - `test.c`: test suite
 
+How to build
+============
+
+There's a straightforward `make` build file. Target `hashmap.o` produces the object file for the library, and target `test` produces the test executable.
+
 How to use
 ==========
 
