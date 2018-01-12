@@ -22,7 +22,7 @@ struct map_entry {
 	struct map_entry *next;
 };
 
-static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *));
+static unsigned int initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *));
 static void finish(struct hashmap *map);
 static void fill_keys(void *buffer[], struct hashmap *map);
 static void fill_values(void *buffer[], struct hashmap *map);
@@ -45,13 +45,22 @@ struct hashmap_api hashmap = {
 	.remove = remove,
 };
 
-static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *)) {
-	map->table = calloc(INITIAL_CAPACITY, sizeof (struct map_entry *));
-	map->size = 0;
-	map->capacity = INITIAL_CAPACITY;
-	map->max_load = max_load;
-	map->hash = hash;
-	map->equals = equals;
+static unsigned int initialize(struct hashmap *map, double max_load, size_t (*hash)(void *key), unsigned int (*equals)(void *, void *)) {
+	map->table = malloc(INITIAL_CAPACITY * sizeof (struct map_entry *));
+	if (map->table == NULL) {
+		return 0;
+	}
+	else {
+		for (size_t i = 0; i < INITIAL_CAPACITY; i += 1) {
+			map->table[i] = NULL;
+		}
+		map->size = 0;
+		map->capacity = INITIAL_CAPACITY;
+		map->max_load = max_load;
+		map->hash = hash;
+		map->equals = equals;
+		return 1;
+	}
 }
 
 static void finish(struct hashmap *map) {

@@ -26,8 +26,9 @@ struct hashmap_api {
 	 *  - maximum load (element-to-capacity ratio): should be greater than zero
 	 *  - hash function for keys
 	 *  - equality test function for keys
+	 * Returns 1 on success, 0 on failure.
 	 */
-	void (*initialize)(struct hashmap *map, double max_load, size_t (*hash)(void *), unsigned int (*equals)(void *, void *));
+	unsigned int (*initialize)(struct hashmap *map, double max_load, size_t (*hash)(void *), unsigned int (*equals)(void *, void *));
 
 	/*
 	 * Deallocates all map resources allocated by the library.
