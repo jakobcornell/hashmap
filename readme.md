@@ -21,7 +21,7 @@ and then access the functions as members of the struct, e.g.:
 	hashmap.put(&map, "foo", "bar");
 	hashmap.finish(&map);
 
-Client programs should include `hashmap.h` and compile against `hashmap.c`. The API uses the type `size_t`, so programs should also include their standard library's `stddef.h` or `stdlib.h`.
+Client programs should include `hashmap.h` and compile against `hashmap.c`. The API uses the type `size_t`, so programs should also include their standard library's `stddef.h` or `stdlib.h`. The header file `hashmap.h` uses these type definitions, so these system headers should be included first.
 
 Testing
 =======
