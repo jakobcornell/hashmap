@@ -35,11 +35,10 @@ struct hashmap_api {
 	void (*finish)(struct hashmap *map);
 
 	/*
-	 * Gets an array of the keys or values in the map. Use the map's `size` field to bound iteration.
-	 * The returned array was dynamically allocated and should be deallocated with `free`.
+	 * Fills an array with the keys or values in the map. Buffers should be large enough to hold `map->size` pointers.
 	 */
-	void **(*keys)(struct hashmap *map);
-	void **(*values)(struct hashmap *map);
+	void (*fill_keys)(void *buffer[], struct hashmap *map);
+	void (*fill_values)(void *buffer[], struct hashmap *map);
 
 	/*
 	 * Returns whether the map contains the specified key.

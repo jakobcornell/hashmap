@@ -24,21 +24,21 @@ struct map_entry {
 
 static void initialize(struct hashmap *, double, size_t (*)(void *), unsigned int (*)(void *, void *));
 static void finish(struct hashmap *);
-static void **keys(struct hashmap *);
-static void **values(struct hashmap *);
+static void fill_keys(void *buffer[], struct hashmap *);
+static void fill_values(void *buffer[], struct hashmap *);
 static unsigned int contains(struct hashmap *, void *);
 static void *get(struct hashmap *, void *);
 static unsigned int put(struct hashmap *, void *, void *);
 static unsigned int remove(struct hashmap *, void *);
 
-static struct map_entry **get_entries(struct hashmap *);
+static void fill_entries(struct map_entry *buffer[], struct hashmap *);
 static size_t key_index(struct hashmap *, void *);
 
 struct hashmap_api hashmap = {
 	.initialize = initialize,
 	.finish = finish,
-	.keys = keys,
-	.values = values,
+	.fill_keys = fill_keys,
+	.fill_values = fill_values,
 	.contains = contains,
 	.get = get,
 	.put = put,
@@ -55,46 +55,40 @@ static void initialize(struct hashmap *map, double max_load, size_t (*hash)(void
 }
 
 static void finish(struct hashmap *map) {
-	struct map_entry **entries = get_entries(map);
+	struct map_entry *entries[map->size];
+	fill_entries(entries, map);
 	for (size_t i = 0; i < map->size; i += 1) {
 		free(entries[i]);
 	}
-	free(entries);
 	free(map->table);
 }
 
-static struct map_entry **get_entries(struct hashmap *map) {
-	struct map_entry **storage = malloc(map->size * sizeof (struct map_entry *));
+static void fill_entries(struct map_entry *buffer[], struct hashmap *map) {
 	size_t dst_i = 0;
 	for (size_t src_i = 0; src_i < map->capacity; src_i += 1) {
 		struct map_entry *entry = map->table[src_i];
 		while (entry != NULL) {
-			storage[dst_i] = entry;
+			buffer[dst_i] = entry;
 			dst_i += 1;
 			entry = entry->next;
 		}
 	}
-	return storage;
 }
 
-static void **keys(struct hashmap *map) {
-	struct map_entry **entries = get_entries(map);
-	void **keys = malloc(map->size * sizeof (void *));
+static void fill_keys(void *buffer[], struct hashmap *map) {
+	struct map_entry *entries[map->size];
+	fill_entries(entries, map);
 	for (size_t i = 0; i < map->size; i += 1) {
-		keys[i] = entries[i]->key;
+		buffer[i] = entries[i]->key;
 	}
-	free(entries);
-	return keys;
 }
 
-static void **values(struct hashmap *map) {
-	struct map_entry **entries = get_entries(map);
-	void **values = malloc(map->size * sizeof (void *));
+static void fill_values(void *buffer[], struct hashmap *map) {
+	struct map_entry *entries[map->size];
+	fill_entries(entries, map);
 	for (size_t i = 0; i < map->size; i += 1) {
-		values[i] = entries[i]->value;
+		buffer[i] = entries[i]->value;
 	}
-	free(entries);
-	return values;
 }
 
 static unsigned int contains(struct hashmap *map, void *key) {

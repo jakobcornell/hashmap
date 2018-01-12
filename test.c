@@ -55,20 +55,20 @@ int main(void) {
 
 		printf("%d: `get`\n", strcmp(hashmap.get(&map, "foo"), "bar") == 0);
 
-		char **keys = (char **) hashmap.keys(&map);
+		char *keys[map.size];
+		hashmap.fill_keys((void **) keys, &map);
 		printf("%d: `keys`\n", strcmp(keys[0], "foo") == 0);
-		free(keys);
 
-		char **values = (char **) hashmap.values(&map);
+		char *values[map.size];
+		hashmap.fill_values((void **) values, &map);
 		printf("%d: `values`\n", strcmp(values[0], "bar") == 0);
-		free(values);
 
 		hashmap.remove(&map, "foo");
 		printf("%d: `remove` and size update\n", map.size == 0);
 
 		printf("%d: `contains` with absent key\n", !hashmap.contains(&map, "foo"));
 
-		hashmap.clean_up(&map);
+		hashmap.finish(&map);
 	}
 	putchar('\n');
 
@@ -111,7 +111,7 @@ int main(void) {
 			printf("%d: size after clearing\n", map.size == 0);
 		}
 
-		hashmap.clean_up(&map);
+		hashmap.finish(&map);
 	}
 	putchar('\n');
 
@@ -140,7 +140,7 @@ int main(void) {
 		printf("%d: `get`\n", get_result);
 		printf("%d: size\n", map.size == size);
 
-		hashmap.clean_up(&map);
+		hashmap.finish(&map);
 	}
 
 	return 0;
