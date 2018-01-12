@@ -37,4 +37,4 @@ Compilation might look like this:
 Testing
 =======
 
-The test program `test` prints test results as an integer followed by a description of the test. The integer is `0` if the test fails, and `1` if it passes.
+The test program `test` prints test results as an integer followed by a description of the test. The integer is 0 if the test fails, and 1 if it passes.
