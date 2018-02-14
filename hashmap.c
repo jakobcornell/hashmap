@@ -106,7 +106,8 @@ static unsigned int contains(struct hashmap *map, void *key) {
 	while (entry != NULL) {
 		if (map->equals(entry->key, key)) {
 			return 1;
-		} else {
+		}
+		else {
 			entry = entry->next;
 		}
 	}
@@ -124,7 +125,8 @@ static void *get(struct hashmap *map, void *key) {
 	while (entry != NULL) {
 		if (map->equals(entry->key, key)) {
 			return entry->value;
-		} else {
+		}
+		else {
 			entry = entry->next;
 		}
 	}
@@ -135,30 +137,29 @@ static unsigned int resize(struct hashmap *map) {
 	size_t new_capacity = map->capacity * 2;
 
 	struct map_entry **new_table = malloc(new_capacity * sizeof (struct map_entry *));
+	if (new_table == NULL) {
+		return 0;
+	}
+
 	for (size_t i = 0; i < new_capacity; i += 1) {
 		new_table[i] = NULL;
 	}
-
-	if (new_table == NULL) {
-		return 0;
-	} else {
-		for (size_t i = 0; i < map->capacity; i += 1) {
-			struct map_entry *entry = map->table[i];
-			struct map_entry *next;
-			while (entry != NULL) {
-				next = entry->next;
-				size_t index = key_index(map, entry->key);
-				entry->next = new_table[index];
-				new_table[index] = entry;
-				entry = next;
-			}
+	for (size_t i = 0; i < map->capacity; i += 1) {
+		struct map_entry *entry = map->table[i];
+		struct map_entry *next;
+		while (entry != NULL) {
+			next = entry->next;
+			size_t index = key_index(map, entry->key);
+			entry->next = new_table[index];
+			new_table[index] = entry;
+			entry = next;
 		}
-
-		free(map->table);
-		map->table = new_table;
-		map->capacity = new_capacity;
-		return 1;
 	}
+
+	free(map->table);
+	map->table = new_table;
+	map->capacity = new_capacity;
+	return 1;
 }
 
 static unsigned int put(struct hashmap *map, void *key, void *value) {
@@ -172,7 +173,8 @@ static unsigned int put(struct hashmap *map, void *key, void *value) {
 				present = 1;
 				target = entry;
 				goto SEARCH_END;
-			} else {
+			}
+			else {
 				entry = entry->next;
 			}
 		}
@@ -182,11 +184,13 @@ static unsigned int put(struct hashmap *map, void *key, void *value) {
 	if (present) {
 		target->value = value;
 		return 1;
-	} else {
+	}
+	else {
 		int success;
 		if ((double) (map->size + 1) / (double) map->capacity > map->max_load) {
 			success = resize(map);
-		} else {
+		}
+		else {
 			success = 1;
 		}
 
@@ -199,7 +203,8 @@ static unsigned int put(struct hashmap *map, void *key, void *value) {
 			map->table[index] = entry;
 			map->size += 1;
 			return 1;
-		} else {
+		}
+		else {
 			return 0;
 		}
 	}
@@ -215,7 +220,8 @@ static unsigned int remove(struct hashmap *map, void *key) {
 			free(entry);
 			map->size -= 1;
 			return 1;
-		} else {
+		}
+		else {
 			parent = &entry->next;
 			entry = entry->next;
 		}
