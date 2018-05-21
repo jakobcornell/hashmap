@@ -32,7 +32,7 @@ static unsigned int put(struct hashmap *map, void *key, void *value);
 static unsigned int remove(struct hashmap *map, void *key);
 
 static void fill_entries(struct map_entry *buffer[], struct hashmap *map);
-static size_t key_index(struct hashmap *map, void *key);
+static size_t key_index(void *key, size_t (*hash_func)(void *), size_t range);
 
 struct hashmap_api hashmap = {
 	.initialize = initialize,
@@ -101,7 +101,7 @@ static void fill_values(void *buffer[], struct hashmap *map) {
 }
 
 static unsigned int contains(struct hashmap *map, void *key) {
-	size_t index = key_index(map, key);
+	size_t index = key_index(key, map->hash, map->capacity);
 	struct map_entry *entry = map->table[index];
 	while (entry != NULL) {
 		if (map->equals(entry->key, key)) {
@@ -114,13 +114,12 @@ static unsigned int contains(struct hashmap *map, void *key) {
 	return 0;
 }
 
-static size_t key_index(struct hashmap *map, void *key) {
-	size_t c = map->capacity;
-	return (map->hash(key) % c + c) % c; // nonnegative remainder
+static size_t key_index(void *key, size_t (*hash_func)(void *), size_t range) {
+	return (hash_func(key) % range + range) % range; // nonnegative remainder
 }
 
 static void *get(struct hashmap *map, void *key) {
-	size_t index = key_index(map, key);
+	size_t index = key_index(key, map->hash, map->capacity);
 	struct map_entry *entry = map->table[index];
 	while (entry != NULL) {
 		if (map->equals(entry->key, key)) {
@@ -149,7 +148,7 @@ static unsigned int resize(struct hashmap *map) {
 		struct map_entry *next;
 		while (entry != NULL) {
 			next = entry->next;
-			size_t index = key_index(map, entry->key);
+			size_t index = key_index(entry->key, map->hash, new_capacity);
 			entry->next = new_table[index];
 			new_table[index] = entry;
 			entry = next;
@@ -195,7 +194,7 @@ static unsigned int put(struct hashmap *map, void *key, void *value) {
 		}
 
 		if (success) {
-			size_t index = key_index(map, key);
+			size_t index = key_index(key, map->hash, map->capacity);
 			struct map_entry *entry = malloc(sizeof (struct map_entry));
 			entry->key = key;
 			entry->value = value;
@@ -211,7 +210,7 @@ static unsigned int put(struct hashmap *map, void *key, void *value) {
 }
 
 static unsigned int remove(struct hashmap *map, void *key) {
-	size_t i = key_index(map, key);
+	size_t i = key_index(key, map->hash, map->capacity);
 	struct map_entry *entry = map->table[i];
 	struct map_entry **parent = &map->table[i];
 	while (entry != NULL) {
